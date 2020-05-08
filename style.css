@@ -8,7 +8,7 @@
 body {
     width: 100%;
     height: 100vh;
-    background-color: grey;
+    background-color: #FFE3B3;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -21,10 +21,40 @@ body {
     padding: 2%;
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 #title{
     font-family: 'Open Sans', sans-serif;
-    color: cornflowerblue;
+    color: #26648E;
     font-size: xx-large;
 }
+
+.bar{
+    fill: #4F8FC0;
+}
+
+.bar:hover{
+    fill: #53D2DC
+}
+
+#tooltip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    text-align: center;
+    width: 150px;
+    height: 50px;
+    padding: 2px;
+    font: 12px;
+    background: lightsteelblue;
+    box-shadow: 1px 1px 10px;
+    border-radius: 2px;
+    pointer-events: none; }
+  
+.overlay {
+position: absolute;
+background: #fff;
+pointer-events: none; }

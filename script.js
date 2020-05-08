@@ -1,77 +1,109 @@
-var dataset = [
-    ['1961 [YR1961]',5.61657931895161],
-    ['1962 [YR1962]',4.77312184751131],
-    ['1963 [YR1963]',7.06048742267159],
-    ['1964 [YR1964]',3.44698214533538],
-    ['1965 [YR1965]',5.26581046402204],
-    ['1966 [YR1966]',4.42599417355294],
-    ['1967 [YR1967]',5.32415018795579],
-    ['1968 [YR1968]',4.94541808045092],
-    ['1969 [YR1969]',4.65635857843871],
-    ['1970 [YR1970]',3.7646048586699],
-    ['1971 [YR1971]',5.42863136891378],
-    ['1972 [YR1972]',5.44679110377977],
-    ['1973 [YR1973]',8.92064682244886],
-    ['1974 [YR1974]',3.55811508024166],
-    ['1975 [YR1975]',5.56477362422095],
-    ['1976 [YR1976]',8.80663056740261],
-    ['1977 [YR1977]',5.6020555772796],
-    ['1978 [YR1978]',5.172103286891],
-    ['1979 [YR1979]',5.63967574582138],
-    ['1980 [YR1980]',5.14891129434373],
-    ['1981 [YR1981]',3.42326917720787],
-    ['1982 [YR1982]',3.61932760604179],
-    ['1983 [YR1983]',1.87461646827209],
-    ['1984 [YR1984]',-7.32368258432169],
-    ['1985 [YR1985]',-7.30660883593995],
-    ['1986 [YR1986]',3.41678280553242],
-    ['1987 [YR1987]',4.31163482025792],
-    ['1988 [YR1988]',6.75254448138335],
-    ['1989 [YR1989]',6.20531111660902],
-    ['1990 [YR1990]',3.03696629398218],
-    ['1991 [YR1991]',-0.578334651228232],
-    ['1992 [YR1992]',0.337603030199674],
-    ['1993 [YR1993]',2.11630717914124],
-    ['1994 [YR1994]',4.38762334121967],
-    ['1995 [YR1995]',4.67869221922228],
-    ['1996 [YR1996]',5.84587347220781],
-    ['1997 [YR1997]',5.18536227553209],
-    ['1998 [YR1998]',-0.576718146342145],
-    ['1999 [YR1999]',3.08191645789127],
-    ['2000 [YR2000]',4.4112221600475],
-    ['2001 [YR2001]',2.89398706180197],
-    ['2002 [YR2002]',3.64590331788908],
-    ['2003 [YR2003]',4.97036869631312],
-    ['2004 [YR2004]',6.69762361347838],
-    ['2005 [YR2005]',4.77766782008273],
-    ['2006 [YR2006]',5.24296035604903],
-    ['2007 [YR2007]',6.61666228418186],
-    ['2008 [YR2008]',4.15275684286497],
-    ['2009 [YR2009]',1.14833222040257],
-    ['2010 [YR2010]',7.63226477978098],
-    ['2011 [YR2011]',3.65975160085374],
-    ['2012 [YR2012]',6.68381888126677],
-    ['2013 [YR2013]',7.06402426383154],
-    ['2014 [YR2014]',6.14529878578456],
-    ['2015 [YR2015]',6.066548904721],
-    ['2016 [YR2016]',6.88405503672969],
-    ['2017 [YR2017]',6.67755356557139],
-    ['2018 [YR2018]',6.24373774240088]
-];
-const d3 = require('https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js')
-const w = 500;
-const h = 500;
-const padding = 60;
+document.addEventListener("DOMContentLoaded",
+   fetch('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/GDP-data.json')
+      .then(response =>{return response.json()})
+      .then(data => {
+         const dataset = data.data;
+         const w = 1000;
+         const h = 500;
+         const padding = 80;
+         const rw = w/dataset.length;
 
-const xScale = d3.scaleLinear()
-                     .domain([0, dataset.length])
-                     .range([padding, w - padding]);
+         var yearsDate = dataset.map((d)=>new Date(d[0]));
 
-const yScale = d3.scaleLinear()
-                    .domain([0, d3.max(dataset)])
-                    .range([h - padding, padding]);
+         var tooltip = d3.select("#chart").append("div")
+         .attr("id", "tooltip")
+         .style("opacity", 0);
 
-const svg = d3.select("body")
-                .append("svg")
-                .attr("width", w)
-                .attr("height", h);
+         var overlay = d3.select('#chart').append('div')
+         .attr('class', 'overlay')
+         .style('opacity', 0);
+
+         const xScale = d3.scaleTime()
+                        .domain([d3.min(yearsDate), d3.max(yearsDate)])
+                        .range([padding, w - padding]);
+
+         const yScale = d3.scaleLinear()
+                           .domain([0, d3.max(dataset, (d) => d[1])])
+                           .range([0, h - padding - padding]);
+
+         const yAxisScale = d3.scaleLinear()
+                           .domain([0, d3.max(dataset, (d) => d[1])])
+                           .range([h - padding , padding]);
+
+         const xAxis = d3.axisBottom()
+                         .scale(xScale);
+
+         const yAxis = d3.axisLeft(yAxisScale)
+
+         const svg = d3.select("#chart")
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("height", h);
+
+         svg.selectAll("rect")
+            .data(dataset)
+            .enter()
+            .append("rect")
+            .attr("x",(d, i) => xScale(yearsDate[i]))
+            .attr("y",(d, i) => h - padding - yScale(d[1]))
+            .attr("width",rw)
+            .attr("height",(d)=> yScale(d[1]))
+            .attr("data-date",(d)=>d[0])
+            .attr("data-gdp",(d)=>d[1])
+            .attr("class","bar")
+            .on('mouseover', function(d, i) {
+               overlay.transition()
+                 .duration(0)
+                 .style('height', d + 'px')
+                 .style('width', rw + 'px')
+                 .style('opacity', .9)
+                 .style('left', (i * rw) + 0 + 'px')
+                 .style('top', h - d + 'px')
+                 .style('transform', 'translateX(60px)');
+               tooltip.transition()
+                 .duration(200)
+                 .style('opacity', .9);
+               tooltip.html(yearsDate[i].getFullYear() + '<br>' + '$' + dataset[i][1].toFixed(1).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') + ' Billion')
+                 .attr('data-date', dataset[i][0])
+                 .style('left', (i * rw) + 30 + 'px')
+                 .style('top', h - padding + 'px')
+                 .style('transform', 'translateX(60px)');
+             })
+             .on('mouseout', function(d) {
+               tooltip.transition()
+                 .duration(200)
+                 .style('opacity', 0);
+               overlay.transition()
+                 .duration(200)
+                 .style('opacity', 0);
+             });
+
+         svg.append("g")
+            .attr("transform", "translate(0," + (h - padding) + ")")
+            .attr("id","x-axis")
+            .attr("class","tick")
+            .call(xAxis);
+
+         svg.append("g")
+            .attr("transform", "translate(" + padding +",0)")
+            .attr("id","y-axis")
+            .attr("class","tick")
+            .call(yAxis);
+
+         svg.append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -250)
+            .attr('y', 100)
+            .text('Gross Domestic Product');
+
+         svg.append('text')
+            .attr('x', w/2)
+            .attr('y', h-30)
+            .text('More Information: http://www.bea.gov/national/pdf/nipaguid.pdf');
+         
+      })
+      .catch(err => {
+         console.log("Can't find json data"+err)
+         window.alert("Can't load data"+err)
+      })
+)
