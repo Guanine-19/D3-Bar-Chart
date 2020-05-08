@@ -45,6 +45,7 @@ body {
     justify-content: center;
     position: absolute;
     text-align: center;
+    font-family: 'Open Sans', sans-serif;
     width: 150px;
     height: 50px;
     padding: 2px;
@@ -58,3 +59,8 @@ body {
 position: absolute;
 background: #fff;
 pointer-events: none; }
+
+.source{
+    font-size: small;
+    font-family: 'Open Sans', sans-serif;
+}

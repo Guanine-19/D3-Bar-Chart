@@ -94,11 +94,13 @@ document.addEventListener("DOMContentLoaded",
             .attr('transform', 'rotate(-90)')
             .attr('x', -250)
             .attr('y', 100)
+            .attr("class","source")
             .text('Gross Domestic Product');
 
          svg.append('text')
             .attr('x', w/2)
             .attr('y', h-30)
+            .attr("class","source")
             .text('More Information: http://www.bea.gov/national/pdf/nipaguid.pdf');
          
       })
